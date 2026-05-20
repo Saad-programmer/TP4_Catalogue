@@ -1,0 +1,23 @@
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <h2>🏠 Administration</h2>
+        <nav>
+            <a routerLink="/admin" routerLinkActive="actif" [routerLinkActiveOptions]="{exact:true}">
+                📊 Dashboard
+            </a>
+            <a routerLink="/admin/users" routerLinkActive="actif">
+                👥 Utilisateurs
+            </a>
+            <a routerLink="/admin/produits" routerLinkActive="actif">
+                📦 Produits
+            </a>
+        </nav>
+        <div class="admin-info">
+            <p>Connecté : {{ auth.getUtilisateur() }}</p>
+            <button (click)="seDeconnecter()" class="btn-logout">🚪 Déconnexion</button>
+        </div>
+    </aside>
+    <main class="admin-content">
+        <router-outlet></router-outlet>
+    </main>
+</div>

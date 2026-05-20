@@ -1,0 +1,1454 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.editorconfig
+.gitignore
+.prettierrc
+angular.json
+package.json
+public/favicon.ico
+README.md
+src/app/app.config.ts
+src/app/app.css
+src/app/app.html
+src/app/app.routes.ts
+src/app/app.spec.ts
+src/app/app.ts
+src/app/auth-guard.spec.ts
+src/app/auth-guard.ts
+src/app/auth.spec.ts
+src/app/auth.ts
+src/app/pages/accueil/accueil.css
+src/app/pages/accueil/accueil.html
+src/app/pages/accueil/accueil.spec.ts
+src/app/pages/accueil/accueil.ts
+src/app/pages/admin/admin-dashboard/admin-dashboard.css
+src/app/pages/admin/admin-dashboard/admin-dashboard.html
+src/app/pages/admin/admin-dashboard/admin-dashboard.spec.ts
+src/app/pages/admin/admin-dashboard/admin-dashboard.ts
+src/app/pages/admin/admin-produits/admin-produits.css
+src/app/pages/admin/admin-produits/admin-produits.html
+src/app/pages/admin/admin-produits/admin-produits.spec.ts
+src/app/pages/admin/admin-produits/admin-produits.ts
+src/app/pages/admin/admin-users/admin-users.css
+src/app/pages/admin/admin-users/admin-users.html
+src/app/pages/admin/admin-users/admin-users.spec.ts
+src/app/pages/admin/admin-users/admin-users.ts
+src/app/pages/admin/admin.css
+src/app/pages/admin/admin.html
+src/app/pages/admin/admin.spec.ts
+src/app/pages/admin/admin.ts
+src/app/pages/contact/contact.css
+src/app/pages/contact/contact.html
+src/app/pages/contact/contact.spec.ts
+src/app/pages/contact/contact.ts
+src/app/pages/detail-produit/detail-produit.css
+src/app/pages/detail-produit/detail-produit.html
+src/app/pages/detail-produit/detail-produit.spec.ts
+src/app/pages/detail-produit/detail-produit.ts
+src/app/pages/login/login.css
+src/app/pages/login/login.html
+src/app/pages/login/login.spec.ts
+src/app/pages/login/login.ts
+src/app/pages/page-introuvable/page-introuvable.css
+src/app/pages/page-introuvable/page-introuvable.html
+src/app/pages/page-introuvable/page-introuvable.spec.ts
+src/app/pages/page-introuvable/page-introuvable.ts
+src/app/pages/produits/produits.css
+src/app/pages/produits/produits.html
+src/app/pages/produits/produits.spec.ts
+src/app/pages/produits/produits.ts
+src/app/produit.spec.ts
+src/app/produit.ts
+src/app/shared/navbar/navbar.css
+src/app/shared/navbar/navbar.html
+src/app/shared/navbar/navbar.spec.ts
+src/app/shared/navbar/navbar.ts
+src/index.html
+src/main.ts
+src/styles.css
+tsconfig.app.json
+tsconfig.json
+tsconfig.spec.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/app/auth-guard.spec.ts">
+import { TestBed } from '@angular/core/testing';
+import { CanActivateFn } from '@angular/router';
+
+import { authGuard } from './auth-guard';
+
+describe('authGuard', () => {
+  const executeGuard: CanActivateFn = (...guardParameters) =>
+    TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+  });
+
+  it('should be created', () => {
+    expect(executeGuard).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/auth-guard.ts">
+import { Router,CanActivateFn } from '@angular/router';
+import { Inject } from '@angular/core';
+import { Auth } from './auth';
+
+
+
+export const authGuard: CanActivateFn = (route, state) => {
+  const auth = Inject(Auth);
+  const router = Inject(Router);
+
+  if(auth.estConnecte()){
+    return true;
+  }
+  console.log('Guard: accès refusé, utilisateur non connecté');
+  return router.createUrlTree(['/login']);
+};
+</file>
+
+<file path="src/app/auth.spec.ts">
+import { TestBed } from '@angular/core/testing';
+
+import { Auth } from './auth';
+
+describe('Auth', () => {
+  let service: Auth;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(Auth);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/auth.ts">
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class Auth {
+  private _connecte = false;
+  private _utilisateur = '';
+
+  estConnecte(): boolean {
+    return this._connecte;
+  }
+
+  getUtilisateur(): string {
+    return this._utilisateur;
+  }
+
+  connecter(email: string): void {
+    this._connecte = true;
+    this._utilisateur = email;
+    console.log(`Utilisateur ${email} connecté`);
+  }
+
+  deconnecter(): void {
+    console.log(`Utilisateur ${this._utilisateur} déconnecté`);
+    this._connecte = false;
+    this._utilisateur = '';
+  }
+}
+</file>
+
+<file path="src/app/pages/accueil/accueil.css">
+
+</file>
+
+<file path="src/app/pages/accueil/accueil.html">
+<h1> Bienvenue sur Catalogue App</h1>
+<p>Navigation Angular 21 - Seance 4</p>
+</file>
+
+<file path="src/app/pages/accueil/accueil.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Accueil } from './accueil';
+
+describe('Accueil', () => {
+  let component: Accueil;
+  let fixture: ComponentFixture<Accueil>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Accueil],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Accueil);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/accueil/accueil.ts">
+import { Component } from '@angular/core';
+
+@Component({ standalone: true,
+  selector: 'app-accueil',
+  imports: [],
+  templateUrl: './accueil.html',
+  styleUrl: './accueil.css',
+})
+
+
+export class Accueil {}
+</file>
+
+<file path="src/app/pages/admin/admin-dashboard/admin-dashboard.css">
+
+</file>
+
+<file path="src/app/pages/admin/admin-dashboard/admin-dashboard.html">
+<p>admin-dashboard works!</p>
+</file>
+
+<file path="src/app/pages/admin/admin-dashboard/admin-dashboard.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AdminDashboard } from './admin-dashboard';
+
+describe('AdminDashboard', () => {
+  let component: AdminDashboard;
+  let fixture: ComponentFixture<AdminDashboard>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AdminDashboard],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AdminDashboard);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/admin/admin-dashboard/admin-dashboard.ts">
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-admin-dashboard',
+  imports: [],
+  templateUrl: './admin-dashboard.html',
+  styleUrl: './admin-dashboard.css',
+})
+export class AdminDashboard {}
+</file>
+
+<file path="src/app/pages/admin/admin-produits/admin-produits.css">
+
+</file>
+
+<file path="src/app/pages/admin/admin-produits/admin-produits.html">
+<p>admin-produits works!</p>
+</file>
+
+<file path="src/app/pages/admin/admin-produits/admin-produits.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AdminProduits } from './admin-produits';
+
+describe('AdminProduits', () => {
+  let component: AdminProduits;
+  let fixture: ComponentFixture<AdminProduits>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AdminProduits],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AdminProduits);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/admin/admin-produits/admin-produits.ts">
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-admin-produits',
+  imports: [],
+  templateUrl: './admin-produits.html',
+  styleUrl: './admin-produits.css',
+})
+export class AdminProduits {}
+</file>
+
+<file path="src/app/pages/admin/admin-users/admin-users.css">
+
+</file>
+
+<file path="src/app/pages/admin/admin-users/admin-users.html">
+<p>admin-users works!</p>
+</file>
+
+<file path="src/app/pages/admin/admin-users/admin-users.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AdminUsers } from './admin-users';
+
+describe('AdminUsers', () => {
+  let component: AdminUsers;
+  let fixture: ComponentFixture<AdminUsers>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AdminUsers],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AdminUsers);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/admin/admin-users/admin-users.ts">
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-admin-users',
+  imports: [],
+  templateUrl: './admin-users.html',
+  styleUrl: './admin-users.css',
+})
+export class AdminUsers {}
+</file>
+
+<file path="src/app/pages/admin/admin.css">
+
+</file>
+
+<file path="src/app/pages/admin/admin.html">
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <h2>🏠 Administration</h2>
+
+        Angular — Séance 4 : Routage & Navigation | Pr. CHAKRI Sana
+
+        2025/2026 Page 17
+        <nav>
+            <a routerLink="/admin" routerLinkActive="actif" [routerLinkActiveOptions]="{exact:true}">
+                🏠 Dashboard
+            </a>
+            <a routerLink="/admin/users" routerLinkActive="actif">
+                🏠 Utilisateurs
+            </a>
+            <a routerLink="/admin/produits" routerLinkActive="actif">
+                🏠 Produits
+            </a>
+        </nav>
+        <p>Connecté : {{ auth.getUtilisateur() }}</p>
+    </aside>
+    <main class="admin-content">
+        <!-- Les composants enfants s'affichent ici -->
+        <router-outlet></router-outlet>
+    </main>
+</div>
+</file>
+
+<file path="src/app/pages/admin/admin.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Admin } from './admin';
+
+describe('Admin', () => {
+  let component: Admin;
+  let fixture: ComponentFixture<Admin>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Admin],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Admin);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/admin/admin.ts">
+import { Component } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Auth } from '../../auth';
+
+@Component({
+  standalone: true,
+  selector: 'app-admin',
+  imports: [RouterOutlet,RouterLink,RouterLinkActive],
+  templateUrl: './admin.html',
+  styleUrl: './admin.css',
+})
+export class Admin {
+  constructor(public auth: Auth,private router: Router) {}
+
+  seDeconnecter():void {
+    this.auth.deconnecter();
+    this.router.navigate(['/accueil']);
+  }
+}
+</file>
+
+<file path="src/app/pages/contact/contact.css">
+
+</file>
+
+<file path="src/app/pages/contact/contact.html">
+<p>contact works!</p>
+</file>
+
+<file path="src/app/pages/contact/contact.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Contact } from './contact';
+
+describe('Contact', () => {
+  let component: Contact;
+  let fixture: ComponentFixture<Contact>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Contact],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Contact);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/contact/contact.ts">
+// contact.component.ts
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+@Component({
+  selector: 'app-contact',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './contact.html',
+})
+export class Contact {
+  nom = '';
+  email = '';
+  message = '';
+  constructor(private router: Router) { }
+  envoyer(): void {
+    if (this.nom && this.email && this.message) {
+      console.log('Message envoyé :', { nom: this.nom, email: this.email });
+      // Naviguer vers l'accueil après envoi
+      this.router.navigate(['/accueil']);
+    }
+  }
+  // Navigation avec query params
+  rechercherProduit(terme: string): void {
+    this.router.navigate(['/produits'], {
+      queryParams: { q: terme, tri: 'prix' }
+    });
+    // Génère : /produits?q=laptop&tri=prix
+  }
+}
+</file>
+
+<file path="src/app/pages/detail-produit/detail-produit.css">
+
+</file>
+
+<file path="src/app/pages/detail-produit/detail-produit.html">
+<!-- detail-produit.component.html -->
+<div>
+    <!-- Bouton retour -->
+    <a routerLink="/produits" class="btn-retour">← Retour à la liste</a>
+    @if (produit) {
+    <div class="fiche-produit">
+        <h1>{{ produit.nom }}</h1>
+        <p class="categorie">🏠 {{ produit.categorie }}</p>
+        <p class="description">{{ produit.description }}</p>
+        <p class="prix">{{ produit.prix | currency:'MAD':'code':'1.0-0' }}</p>
+        <p>
+            Disponibilité :
+            @if (produit.enStock) { <span class="stock-ok">🏠 En stock</span> }
+            @else { <span class="rupture">🏠 Rupture de stock</span> }
+        </p>
+    </div>
+    } @else {
+    <div class="not-found">
+        <h2>❌ Produit introuvable</h2>
+        <p>Aucun produit avec l'identifiant : {{ id }}</p>
+        <a routerLink="/produits">Voir tous les produits</a>
+    </div>
+    }
+</div>
+</file>
+
+<file path="src/app/pages/detail-produit/detail-produit.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DetailProduit } from './detail-produit';
+
+describe('DetailProduit', () => {
+  let component: DetailProduit;
+  let fixture: ComponentFixture<DetailProduit>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DetailProduit],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DetailProduit);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/detail-produit/detail-produit.ts">
+import { Component,OnInit } from '@angular/core';
+import { ActivatedRoute,RouterLink } from '@angular/router';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { ProduitService, Produit } from '../../produit';
+
+
+@Component({
+  standalone:true,
+  selector: 'app-detail-produit',
+  imports: [CommonModule, RouterLink,CurrencyPipe],
+  templateUrl: './detail-produit.html',
+  styleUrl: './detail-produit.css',
+})
+export class DetailProduit implements OnInit{
+  id:String = '';
+  produit:Produit | undefined;
+
+  constructor(private route:ActivatedRoute,private produitService:ProduitService){}
+
+  ngOnInit(): void {
+    this.id = this.route.snapshot.params['id'];
+    this.produit = this.produitService.getById(+this.id);
+    console.log('Produit demande: ',this.id,'->',this.produit?.nom);
+  }
+}
+</file>
+
+<file path="src/app/pages/login/login.css">
+
+</file>
+
+<file path="src/app/pages/login/login.html">
+<!-- login.component.html -->
+<div class="login-container">
+    <h1>🏠 Connexion</h1>
+    @if (erreur) {
+    <div class="erreur">{{ erreur }}</div>
+    }
+    <form (ngSubmit)="connecter()">
+        <input [(ngModel)]="email" name="email" type="email" placeholder="Adresse email" required>
+        <input [(ngModel)]="password" name="password" type="password" placeholder="Mot de passe" required>
+        <button type="submit">🏠 Se connecter</button>
+        <button type="button" (click)="annuler()">❌ Annuler</button>
+    </form>
+    <p>Essayez n'importe quel email/mot de passe pour tester.</p>
+</div>
+</file>
+
+<file path="src/app/pages/login/login.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Login } from './login';
+
+describe('Login', () => {
+  let component: Login;
+  let fixture: ComponentFixture<Login>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Login],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Login);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/login/login.ts">
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Auth } from '../../auth';
+
+@Component({
+  standalone: true,
+  selector: 'app-login',
+  imports: [FormsModule],
+  templateUrl: './login.html',
+  styleUrl: './login.css',
+})
+export class Login {
+  email = '';
+  password = '';
+  erreur = '';
+
+  constructor(private auth: Auth, private router: Router) {}
+
+  connecter():void {
+    if(!this.email || !this.password){
+      this.erreur = 'Veuillez remplir tous les champs';
+      return;
+    }
+
+    this.auth.connecter(this.email);
+
+    this.router.navigate(['/admin']);
+  }
+
+  annuler():void {
+    this.router.navigate(['/accueil']);
+  }
+};
+</file>
+
+<file path="src/app/pages/page-introuvable/page-introuvable.css">
+
+</file>
+
+<file path="src/app/pages/page-introuvable/page-introuvable.html">
+<h1>404 - Page Introuvable</h1>
+
+<p>L'url demandé n'existe pas</p>
+<a routerLink="/accueil">Retour a l'accueil</a>
+</file>
+
+<file path="src/app/pages/page-introuvable/page-introuvable.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { PageIntrouvable } from './page-introuvable';
+
+describe('PageIntrouvable', () => {
+  let component: PageIntrouvable;
+  let fixture: ComponentFixture<PageIntrouvable>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PageIntrouvable],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PageIntrouvable);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/pages/page-introuvable/page-introuvable.ts">
+import { Component } from '@angular/core';
+import { RouterLink } from "@angular/router";
+
+@Component({ standalone: true,
+  selector: 'app-page-introuvable',
+  imports: [RouterLink],
+  templateUrl: './page-introuvable.html',
+  styleUrl: './page-introuvable.css',
+})
+export class PageIntrouvable {}
+</file>
+
+<file path="src/app/pages/produits/produits.css">
+
+</file>
+
+<file path="src/app/pages/produits/produits.html">
+<!-- produits.component.html -->
+<div>
+    <h1>🏠 Catalogue — {{ produits.length }} produit(s)</h1>
+    <div class="grille-produits">
+        @for (p of produits; track p.id) {
+        <div class="carte-produit">
+            <h3>{{ p.nom }}</h3>
+            <p class="categorie">{{ p.categorie }}</p>
+            <p class="prix">{{ p.prix | currency:'MAD':'code':'1.0-0' }}</p>
+            <p [class.rupture]="!p.enStock">
+                {{ p.enStock ? '🏠 En stock' : '🏠 Rupture' }}
+            </p>
+            <!-- Lien dynamique vers /produits/:id -->
+            <a [routerLink]="['/produits', p.id]" class="btn-detail">
+                Voir le détail →
+            </a>
+        </div>
+        }
+    </div>
+</div>
+</file>
+
+<file path="src/app/pages/produits/produits.spec.ts">
+// produit.service.ts
+import { Injectable } from '@angular/core';
+export interface Produit {
+  id: number;
+  nom: string;
+  prix: number;
+  enStock: boolean;
+  description: string;
+  categorie: string;
+}
+@Injectable({ providedIn: 'root' })
+export class ProduitService {
+  private produits: Produit[] = [
+    { id: 1, nom: 'Laptop Pro 15', prix: 8500, enStock: true, description: 'Processeur i7, 16 Go RAM, SSD 512 Go', categorie: 'Informatique' },
+    { id: 2, nom: 'Souris Wireless', prix: 150, enStock: true, description: 'Ergonomique, sans fil, autonomie 12 mois', categorie: 'Périphérique' },
+    { id: 3, nom: 'Clavier Méca', prix: 300, enStock: false, description: 'Switches Cherry MX Red, rétroéclairé', categorie: 'Périphérique' },
+    { id: 4, nom: 'Écran 4K 27"', prix: 3200, enStock: true, description: 'IPS, 144Hz, HDR, USB- C', categorie: 'Moniteur' },
+    { id: 5, nom: 'Casque Audio', prix: 450, enStock: true, description: 'Noise cancelling, 30h autonomie', categorie: 'Audio' },
+  ];
+  getAll(): Produit[] { return this.produits; }
+  getById(id: number): Produit | undefined {
+    return this.produits.find(p => p.id === id);
+  }
+  getByCategorie(cat: string): Produit[] {
+    return this.produits.filter(p => p.categorie
+      === cat);
+  }
+}
+</file>
+
+<file path="src/app/pages/produits/produits.ts">
+import { Component, OnInit } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { CommonModule, CurrencyPipe } from "@angular/common";
+import { ProduitService, Produit } from "../../produit";
+
+@Component({
+  selector: 'app-produits',
+  standalone: true,
+  imports: [CommonModule, RouterLink, CurrencyPipe],
+  templateUrl: './produits.html',
+  styleUrl: './produits.css'
+})
+export class Produits implements OnInit {
+  produits: Produit[] = [];
+  constructor(private produitService: ProduitService) { }
+
+
+  ngOnInit(): void {
+    this.produitService.getAll();
+  }
+}
+</file>
+
+<file path="src/app/produit.spec.ts">
+import { TestBed } from '@angular/core/testing';
+
+import { Produit } from './produit';
+
+describe('Produit', () => {
+  let service: Produit;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(Produit);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/produit.ts">
+// produit.service.ts
+import { Injectable } from '@angular/core';
+export interface Produit {
+  id: number;
+  nom: string;
+  prix: number;
+  enStock: boolean;
+  description: string;
+  categorie: string;
+}
+@Injectable({ providedIn: 'root' })
+export class ProduitService {
+  private produits: Produit[] = [
+    { id: 1, nom: 'Laptop Pro 15', prix: 8500, enStock: true, description: 'Processeur i7, 16 Go RAM, SSD 512 Go', categorie: 'Informatique' },
+    { id: 2, nom: 'Souris Wireless', prix: 150, enStock: true, description: 'Ergonomique, sans fil, autonomie 12 mois', categorie: 'Périphérique' },
+    { id: 3, nom: 'Clavier Méca', prix: 300, enStock: false, description: 'Switches Cherry MX Red, rétroéclairé', categorie: 'Périphérique' },
+    { id: 4, nom: 'Écran 4K 27"', prix: 3200, enStock: true, description: 'IPS, 144Hz, HDR, USB- C', categorie: 'Moniteur' },
+    { id: 5, nom: 'Casque Audio', prix: 450, enStock: true, description: 'Noise cancelling, 30h autonomie', categorie: 'Audio' },
+  ];
+  getAll(): Produit[] { return this.produits; }
+  getById(id: number): Produit | undefined {
+    return this.produits.find(p => p.id === id);
+  }
+  getByCategorie(cat: string): Produit[] {
+    return this.produits.filter(p => p.categorie
+      === cat);
+  }
+}
+</file>
+
+<file path="src/app/shared/navbar/navbar.css">
+/* navbar.component.css */
+.navbar {
+display: flex;
+align-items: center;
+gap: 8px;
+background: #1A1A2E;
+padding: 12px 24px;
+}
+.logo {
+font-weight: bold;
+color: #DD0031;
+margin-right: auto;
+font-size: 18px;
+}
+a {
+text-decoration: none;
+padding: 8px 16px;
+color: #B0BEC5;
+border-radius: 4px;
+transition: background 0.2s;
+}
+/* Appliqué automatiquement par Angular quand la route est active */
+a.actif {
+color: white;
+background: #DD0031;
+font-weight: bold;
+}
+a:hover:not(.actif) {
+background: rgba(255,255,255,0.1);
+color: white;
+}
+</file>
+
+<file path="src/app/shared/navbar/navbar.html">
+<!-- navbar.component.html -->
+<nav class="navbar">
+    <span class="logo">🏠 CatalogueApp</span>
+    <!-- routerLink : navigation sans rechargement -->
+    <!-- routerLinkActive : ajoute la classe 'actif' sur le lien de la page active -->
+    <a routerLink="/accueil" routerLinkActive="actif" [routerLinkActiveOptions]="{exact: true}">
+        🏠 Accueil
+    </a>
+    <a routerLink="/produits" routerLinkActive="actif">
+        🏠 Produits
+    </a>
+    <a routerLink="/contact" routerLinkActive="actif">
+        🏠 Contact
+    </a>
+    <a routerLink="/admin" routerLinkActive="actif">
+        🏠 Admin
+    </a>
+    <a routerLink="/login" routerLinkActive="actif">
+        🏠 Connexion
+    </a>
+</nav>
+</file>
+
+<file path="src/app/shared/navbar/navbar.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Navbar } from './navbar';
+
+describe('Navbar', () => {
+  let component: Navbar;
+  let fixture: ComponentFixture<Navbar>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Navbar],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Navbar);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/shared/navbar/navbar.ts">
+import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive} from '@angular/router';
+
+@Component({
+  standalone: true,
+  selector: 'app-navbar',
+  imports: [RouterLink,RouterLinkActive],
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css',
+})
+export class Navbar {}
+</file>
+
+<file path=".editorconfig">
+# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.ts]
+quote_type = single
+ij_typescript_use_double_quotes = false
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+</file>
+
+<file path=".gitignore">
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# System files
+.DS_Store
+Thumbs.db
+</file>
+
+<file path=".prettierrc">
+{
+  "printWidth": 100,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ]
+}
+</file>
+
+<file path="angular.json">
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "catalogue-app": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "catalogue-app:build:production"
+            },
+            "development": {
+              "buildTarget": "catalogue-app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    }
+  }
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "catalogue-app",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "packageManager": "npm@11.12.1",
+  "dependencies": {
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.9",
+    "@angular/cli": "^21.2.9",
+    "@angular/compiler-cli": "^21.2.0",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
+  }
+}
+</file>
+
+<file path="README.md">
+# CatalogueApp
+
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+
+## Development server
+
+To start a local development server, run:
+
+```bash
+ng serve
+```
+
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
+```bash
+ng generate component component-name
+```
+
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+```bash
+ng generate --help
+```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+</file>
+
+<file path="src/app/app.config.ts">
+// app.config.ts
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { routes } from './app.routes';
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZonelessChangeDetection(), // v21 : zoneless par defaut
+    provideRouter(routes, withComponentInputBinding()), // route params en signals
+  ]
+};
+</file>
+
+<file path="src/app/app.css">
+
+</file>
+
+<file path="src/app/app.html">
+<app-navbar></app-navbar>
+
+<main class="contenu-principal">
+  <router-outlet></router-outlet>
+</main>
+</file>
+
+<file path="src/app/app.routes.ts">
+// app.routes.ts
+import { Routes } from '@angular/router';
+import { Accueil } from './pages/accueil/accueil';
+import { Produits } from './pages/produits/produits';
+
+import { DetailProduit } from './pages/detail-produit/detail-produit';
+
+import { Contact } from './pages/contact/contact';
+import { Login } from './pages/login/login';
+import { Admin } from './pages/admin/admin';
+
+import { PageIntrouvable } from './pages/page-introuvable/page-introuvable';
+
+import { authGuard } from './auth-guard';
+
+
+// app.routes.ts — Routes imbriquées
+
+import { AdminDashboard } from './pages/admin/admin-dashboard/admin-dashboard';
+
+import { AdminUsers } from './pages/admin/admin-users/admin-users';
+
+import { AdminProduits } from './pages/admin/admin-produits/admin-produits';
+
+
+
+export const routes: Routes = [
+    { path: '', component: Accueil },
+    { path: 'accueil', component: Accueil },
+    { path: 'produits', component: Produits },
+    { path: 'produits/:id', component: DetailProduit },
+    { path: 'contact', component: Contact },
+    { path: 'login', component: Login },
+    
+    {path:'admin',
+        component: Admin,
+        canActivate: [authGuard],
+        children:[
+            { path: '', component: AdminDashboard },
+            { path: 'users', component: AdminUsers },
+            { path: 'produits', component: AdminProduits },
+        ]
+    },
+    {
+        path: '**',
+        component: PageIntrouvable
+    }
+];
+</file>
+
+<file path="src/app/app.spec.ts">
+import { TestBed } from '@angular/core/testing';
+import { App } from './app';
+
+describe('App', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it('should render title', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, catalogue-app');
+  });
+});
+</file>
+
+<file path="src/app/app.ts">
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Navbar } from './shared/navbar/navbar';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet,Navbar],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('catalogue-app');
+}
+</file>
+
+<file path="src/index.html">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CatalogueApp</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+</file>
+
+<file path="src/main.ts">
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+</file>
+
+<file path="src/styles.css">
+/* You can add global styles to this file, and also import other style files */
+</file>
+
+<file path="tsconfig.app.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": []
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}
+</file>
+
+<file path="tsconfig.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}
+</file>
+
+<file path="tsconfig.spec.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "vitest/globals"
+    ]
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts"
+  ]
+}
+</file>
+
+</files>
